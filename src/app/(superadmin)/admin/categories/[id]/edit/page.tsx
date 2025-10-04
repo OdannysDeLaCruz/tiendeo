@@ -138,7 +138,7 @@ export default function EditCategoryPage() {
                 Imagen de la Categoría
               </label>
               <ImageUpload
-                currentImage={imageUrl}
+                currentImage={imageUrl || undefined}
                 onImageChange={setImageUrl}
               />
               <p className="mt-1 text-sm text-gray-500">

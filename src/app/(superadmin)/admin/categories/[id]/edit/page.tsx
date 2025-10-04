@@ -12,7 +12,7 @@ export default function EditCategoryPage() {
 
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>("");
   const [displayOrder, setDisplayOrder] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);

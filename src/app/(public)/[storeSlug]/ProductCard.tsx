@@ -25,9 +25,7 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({
-  storeProductId,
   name,
-  description,
   imageUrl,
   prices,
   onOpenModal,

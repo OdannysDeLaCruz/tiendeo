@@ -30,6 +30,10 @@ export async function PATCH(
       );
     }
 
+    if (!session.user.storeId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
+
     // Buscar la orden por orderNumber
     const order = await prisma.order.findFirst({
       where: {

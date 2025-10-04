@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import ProductCard from "../ProductCard";
 import ProductModal from "@/components/ProductModal";
-import { MeasurementUnit, StoreProductPrice } from "@/types/product";
+import { StoreProductPrice } from "@/types/product";
 
 interface StoreProduct {
   id: string;
@@ -43,14 +43,7 @@ export default function SearchPage() {
   const [showModal, setShowModal] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
-  useEffect(() => {
-    fetchProducts();
-    loadRecentSearches();
-    // Auto-focus en el input
-    inputRef.current?.focus();
-  }, []);
-
-  const loadRecentSearches = () => {
+  const loadRecentSearches = useCallback(() => {
     const saved = localStorage.getItem(`recent_searches_${storeSlug}`);
     if (saved) {
       try {
@@ -59,7 +52,29 @@ export default function SearchPage() {
         console.error("Error loading recent searches:", error);
       }
     }
-  };
+  }, [storeSlug]);
+
+  const fetchProducts = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`/api/${storeSlug}/products`);
+      if (response.ok) {
+        const data = await response.json();
+        setCategories(data);
+      }
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      setLoading(false);
+    }
+  }, [storeSlug]);
+
+  useEffect(() => {
+    fetchProducts();
+    loadRecentSearches();
+    // Auto-focus en el input
+    inputRef.current?.focus();
+  }, [fetchProducts, loadRecentSearches]);
 
   const saveRecentSearch = (query: string) => {
     if (!query.trim()) return;
@@ -88,20 +103,7 @@ export default function SearchPage() {
     }
   };
 
-  const fetchProducts = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`/api/${storeSlug}/products`);
-      if (response.ok) {
-        const data = await response.json();
-        setCategories(data);
-      }
-      setLoading(false);
-    } catch (error) {
-      console.error("Error fetching products:", error);
-      setLoading(false);
-    }
-  };
+
 
   // Obtener todos los productos
   const allProducts = categories.flatMap((cat) => cat.products);
@@ -296,7 +298,7 @@ export default function SearchPage() {
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-600">
-              No se encontraron productos para "{searchQuery}"
+              No se encontraron productos para &quot;{searchQuery}&quot;
             </p>
           </div>
         ) : (

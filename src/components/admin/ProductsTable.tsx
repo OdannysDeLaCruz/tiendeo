@@ -51,8 +51,8 @@ export default function ProductsTable({ products }: ProductsTableProps) {
 
       // Recargar la página para ver los cambios
       window.location.reload();
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Error desconocido");
     }
   };
 

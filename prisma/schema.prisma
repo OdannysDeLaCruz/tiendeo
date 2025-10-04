@@ -1,0 +1,260 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================
+// TABLAS GLOBALES (sin tenant_id)
+// ============================================
+
+// Superadministradores del sistema
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("SUPERADMIN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+// Tiendas registradas en el sistema
+model Store {
+  id        String   @id @default(cuid())
+  slug      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  storeUsers    StoreUser[]
+  storeProducts StoreProduct[]
+  orders        Order[]
+  customers     Customer[]
+
+  @@map("stores")
+}
+
+// Categorías maestras de productos
+model MasterCategory {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  slug         String   @unique
+  imageUrl     String?
+  displayOrder Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  masterProducts MasterProduct[]
+
+  @@map("master_categories")
+}
+
+// Unidades de medida del sistema
+model MeasurementUnit {
+  id           String   @id @default(cuid())
+  name         String   @unique // "Unidad", "Libra", "Kilo", "Gramo"
+  abbreviation String   @unique // "un", "lb", "kg", "g"
+  type         String // "UNIT", "WEIGHT"
+  baseUnit     String? // Para conversiones: "g" para gramo/kilo/libra
+  conversionFactor Decimal? @db.Decimal(10, 4) // Factor de conversión a baseUnit
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  productMeasurements ProductMeasurement[]
+  storeProductPrices  StoreProductPrice[]
+  orderItems          OrderItem[]
+
+  @@map("measurement_units")
+}
+
+// Catálogo de productos maestro (gestionado por superadmin)
+model MasterProduct {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  imageUrl    String
+  categoryId  String
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relaciones
+  category            MasterCategory       @relation(fields: [categoryId], references: [id])
+  storeProducts       StoreProduct[]
+  productMeasurements ProductMeasurement[]
+
+  @@index([categoryId])
+  @@index([isActive])
+  @@map("master_products")
+}
+
+// Unidades de medida permitidas por producto maestro
+model ProductMeasurement {
+  id                String   @id @default(cuid())
+  masterProductId   String
+  measurementUnitId String
+  isDefault         Boolean  @default(false) // Unidad por defecto
+  minQuantity       Decimal? @db.Decimal(10, 2) // Cantidad mínima (ej: 0.25 para 1/4 lb)
+  stepQuantity      Decimal? @db.Decimal(10, 2) // Incremento (ej: 0.25 para vender en cuartos)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relaciones
+  masterProduct   MasterProduct   @relation(fields: [masterProductId], references: [id], onDelete: Cascade)
+  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id])
+
+  @@unique([masterProductId, measurementUnitId])
+  @@index([masterProductId])
+  @@map("product_measurements")
+}
+
+// ============================================
+// TABLAS CON TENANT (con store_id)
+// ============================================
+
+// Tenderos (usuarios por tienda)
+model StoreUser {
+  id        String   @id @default(cuid())
+  storeId   String
+  email     String
+  password  String
+  name      String
+  role      String   @default("OWNER")
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  store Store @relation(fields: [storeId], references: [id], onDelete: Cascade)
+
+  @@unique([storeId, email])
+  @@index([storeId])
+  @@map("store_users")
+}
+
+// Productos específicos de cada tienda
+model StoreProduct {
+  id              String   @id @default(cuid())
+  storeId         String
+  masterProductId String
+  price           Decimal  @db.Decimal(10, 2) // Precio por defecto (backwards compatibility)
+  stock           Int      @default(0)
+  isAvailable     Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relaciones
+  store         Store               @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  masterProduct MasterProduct       @relation(fields: [masterProductId], references: [id])
+  prices        StoreProductPrice[] // Precios por unidad de medida
+  orderItems    OrderItem[]
+
+  @@unique([storeId, masterProductId])
+  @@index([storeId])
+  @@index([storeId, isAvailable])
+  @@map("store_products")
+}
+
+// Precios del tendero por unidad de medida
+model StoreProductPrice {
+  id                String   @id @default(cuid())
+  storeProductId    String
+  measurementUnitId String
+  price             Decimal  @db.Decimal(10, 2)
+  isActive          Boolean  @default(true)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relaciones
+  storeProduct    StoreProduct    @relation(fields: [storeProductId], references: [id], onDelete: Cascade)
+  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id])
+
+  @@unique([storeProductId, measurementUnitId])
+  @@index([storeProductId])
+  @@index([storeProductId, isActive])
+  @@map("store_product_prices")
+}
+
+// Clientes que hacen pedidos (sin autenticación)
+model Customer {
+  id        String   @id @default(cuid())
+  storeId   String
+  name      String
+  phone     String
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relaciones
+  store  Store   @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  orders Order[]
+
+  @@index([storeId])
+  @@index([storeId, phone])
+  @@map("customers")
+}
+
+// Pedidos
+model Order {
+  id           String   @id @default(cuid())
+  storeId      String
+  customerId   String
+  orderNumber  String
+  accessToken  String   @default(cuid()) // Token único para acceso del cliente
+  status       String   @default("PENDING")
+  deliveryType String
+  total        Decimal  @db.Decimal(10, 2)
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relaciones
+  store    Store       @relation(fields: [storeId], references: [id], onDelete: Cascade)
+  customer Customer    @relation(fields: [customerId], references: [id])
+  items    OrderItem[]
+
+  @@unique([storeId, orderNumber])
+  @@index([storeId])
+  @@index([storeId, status])
+  @@index([storeId, createdAt])
+  @@index([storeId, orderNumber, accessToken])
+  @@map("orders")
+}
+
+// Items de cada pedido
+model OrderItem {
+  id                String   @id @default(cuid())
+  orderId           String
+  storeProductId    String
+  measurementUnitId String
+  quantity          Decimal  @db.Decimal(10, 2) // Ahora decimal para soportar 0.5, 1.25, etc
+  price             Decimal  @db.Decimal(10, 2) // Precio por unidad de medida
+  subtotal          Decimal  @db.Decimal(10, 2)
+  itemStatus        String   @default("PENDING") // PENDING, READY, UNAVAILABLE
+  updatedAt         DateTime @default(now()) @updatedAt
+
+  // Relaciones
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  storeProduct    StoreProduct    @relation(fields: [storeProductId], references: [id])
+  measurementUnit MeasurementUnit @relation(fields: [measurementUnitId], references: [id])
+
+  @@index([orderId])
+  @@index([orderId, itemStatus])
+  @@map("order_items")
+}

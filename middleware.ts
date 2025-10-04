@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
 
 // Rutas que NO requieren tenant resolution
 const EXCLUDED_PATHS = [
@@ -38,33 +37,12 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  try {
-    // Verificar que la tienda existe y está activa
-    const store = await prisma.store.findUnique({
-      where: { slug: storeSlug },
-      select: { id: true, slug: true, isActive: true },
-    });
+  // Solo establecer el header con el slug de la tienda
+  // La validación se hará en el Server Component
+  const response = NextResponse.next();
+  response.headers.set("x-store-slug", storeSlug);
 
-    if (!store) {
-      // Tienda no encontrada
-      return NextResponse.redirect(new URL("/404", request.url));
-    }
-
-    if (!store.isActive) {
-      // Tienda inactiva
-      return NextResponse.redirect(new URL("/store-inactive", request.url));
-    }
-
-    // Establecer headers con información del tenant
-    const response = NextResponse.next();
-    response.headers.set("x-store-id", store.id);
-    response.headers.set("x-store-slug", store.slug);
-
-    return response;
-  } catch (error) {
-    console.error("Error en middleware de tenant:", error);
-    return NextResponse.redirect(new URL("/error", request.url));
-  }
+  return response;
 }
 
 export const config = {

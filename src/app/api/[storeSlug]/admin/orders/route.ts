@@ -24,9 +24,11 @@ export async function GET(
     const status = searchParams.get("status");
 
     // Construir filtros
-    const where: any = {
-      storeId: session.user.storeId,
-    };
+    const where: {storeId?: string, status?: string } = {};
+
+    if (session.user.storeId) {
+      where.storeId = session.user.storeId;
+    }
 
     if (status && status !== "all") {
       where.status = status;

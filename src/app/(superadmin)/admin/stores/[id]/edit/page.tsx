@@ -20,7 +20,8 @@ export default function EditStorePage() {
 
   useEffect(() => {
     fetchStore();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchStore = async () => {
     try {

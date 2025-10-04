@@ -38,11 +38,13 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchCategories();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     fetchProducts();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory, statusFilter]);
 
   const fetchCategories = async () => {
     try {

@@ -55,11 +55,13 @@ export default function StoreProductsPage() {
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     filterProducts();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [products, searchTerm, selectedCategory, availabilityFilter]);
 
   const fetchProducts = async () => {
     try {

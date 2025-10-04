@@ -54,7 +54,8 @@ export default function EditProductPage() {
 
   useEffect(() => {
     fetchProduct();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchProduct = async () => {
     try {

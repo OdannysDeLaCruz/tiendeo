@@ -65,13 +65,14 @@ export default function AddProductsPage() {
 
   useEffect(() => {
     fetchCategories();
-  });
+  }, []);
 
   useEffect(() => {
     if (selectedCategory) {
       fetchProducts(selectedCategory);
     }
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
 
   const fetchCategories = async () => {
     try {

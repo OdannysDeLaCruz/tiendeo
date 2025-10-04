@@ -20,7 +20,8 @@ export default function EditCategoryPage() {
 
   useEffect(() => {
     fetchCategory();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const fetchCategory = async () => {
     try {

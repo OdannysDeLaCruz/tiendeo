@@ -50,12 +50,13 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchStores();
-  });
+  }, []);
 
   useEffect(() => {
     fetchOrders();
     fetchStats();
-  });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedStore, statusFilter]);
 
   const fetchStores = async () => {
     try {

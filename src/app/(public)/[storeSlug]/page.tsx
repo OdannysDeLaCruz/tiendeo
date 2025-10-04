@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams } from "next/navigation";
+import Image from "next/image";
 import ProductCard from "./ProductCard";
 import ProductModal from "@/components/ProductModal";
-import { MeasurementUnit, StoreProductPrice } from "@/types/product";
+import { StoreProductPrice } from "@/types/product";
 
 interface StoreProduct {
   id: string;
@@ -42,11 +43,7 @@ export default function StorePage() {
   const [selectedProduct, setSelectedProduct] = useState<StoreProduct | null>(null);
   const [showModal, setShowModal] = useState(false);
 
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
       const response = await fetch(`/api/${storeSlug}/products`);
@@ -59,7 +56,12 @@ export default function StorePage() {
       console.error("Error fetching products:", error);
       setLoading(false);
     }
-  };
+  }, [storeSlug]);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
 
   const scrollToCategory = (categoryId: string | null) => {
     if (!scrollContainerRef.current) return;
@@ -145,12 +147,13 @@ export default function StorePage() {
                     : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                 }`}
               >
-                <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0">
+                <div className="w-6 h-6 rounded-full overflow-hidden flex items-center justify-center flex-shrink-0 relative">
                   {category.imageUrl ? (
-                    <img
+                    <Image
                       src={category.imageUrl}
                       alt={category.name}
-                      className="w-full h-full object-cover"
+                      fill
+                      className="object-cover"
                     />
                   ) : (
                     <div className="w-full h-full bg-gray-300 flex items-center justify-center">

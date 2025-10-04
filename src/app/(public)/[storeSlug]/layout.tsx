@@ -19,16 +19,6 @@ export default async function StoreLayout({
   // Obtener información de la tienda
   const store = await prisma.store.findUnique({
     where: { slug: storeSlug },
-    select: {
-      id: true,
-      name: true,
-      slug: true,
-      address: true,
-      phone: true,
-      isActive: true,
-      createdAt: true,
-      updatedAt: true,
-    },
   });
 
   // Si la tienda no existe o no está activa, mostrar 404
@@ -96,12 +86,6 @@ export default async function StoreLayout({
           <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
             <div className="text-center text-sm text-gray-600">
               <p>{store.name}</p>
-              {store.address && <p className="mt-1">{store.address}</p>}
-              {store.phone && (
-                <p className="mt-1">
-                  Tel: <a href={`tel:${store.phone}`} className="text-blue-600 hover:text-blue-800">{store.phone}</a>
-                </p>
-              )}
             </div>
           </div>
         </footer>

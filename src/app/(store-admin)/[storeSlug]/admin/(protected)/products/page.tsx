@@ -49,19 +49,17 @@ export default function StoreProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [availabilityFilter, setAvailabilityFilter] = useState<string>("all");
-  const [editingPrice, setEditingPrice] = useState<string | null>(null);
-  const [newPrice, setNewPrice] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
 
   useEffect(() => {
     fetchProducts();
     fetchCategories();
-  }, []);
+  });
 
   useEffect(() => {
     filterProducts();
-  }, [products, searchTerm, selectedCategory, availabilityFilter]);
+  });
 
   const fetchProducts = async () => {
     try {
@@ -149,8 +147,8 @@ export default function StoreProductsPage() {
 
       await fetchProducts();
       setUpdating(false);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
       setUpdating(false);
     }
   };
@@ -176,52 +174,8 @@ export default function StoreProductsPage() {
 
       await fetchProducts();
       setUpdating(false);
-    } catch (error: any) {
-      alert(error.message);
-      setUpdating(false);
-    }
-  };
-
-  const handleStartEditPrice = (productId: string, currentPrice: number) => {
-    setEditingPrice(productId);
-    setNewPrice(currentPrice.toString());
-  };
-
-  const handleCancelEditPrice = () => {
-    setEditingPrice(null);
-    setNewPrice("");
-  };
-
-  const handleSavePrice = async (productId: string) => {
-    const price = parseFloat(newPrice);
-
-    if (isNaN(price) || price <= 0) {
-      alert("El precio debe ser un número mayor a 0");
-      return;
-    }
-
-    try {
-      setUpdating(true);
-      const response = await fetch(
-        `/api/${storeSlug}/admin/products/${productId}`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ price }),
-        }
-      );
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error || "Error al actualizar el precio");
-      }
-
-      await fetchProducts();
-      setEditingPrice(null);
-      setNewPrice("");
-      setUpdating(false);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
       setUpdating(false);
     }
   };

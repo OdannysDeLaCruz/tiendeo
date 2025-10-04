@@ -45,7 +45,7 @@ export default function ProductMeasurementsConfig({
     if (onMeasurementsChange) {
       onMeasurementsChange(selectedMeasurements);
     }
-  }, [selectedMeasurements]);
+  }, [selectedMeasurements, onMeasurementsChange]);
 
   const fetchAvailableUnits = useCallback(async () => {
     try {

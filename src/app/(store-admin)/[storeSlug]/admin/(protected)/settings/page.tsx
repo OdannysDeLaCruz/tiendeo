@@ -29,7 +29,7 @@ export default function StoreSettingsPage() {
 
   useEffect(() => {
     fetchStore();
-  }, []);
+  });
 
   const fetchStore = async () => {
     try {
@@ -80,8 +80,8 @@ export default function StoreSettingsPage() {
       setEditingName(false);
       alert("Nombre actualizado exitosamente");
       setUpdating(false);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
       setUpdating(false);
     }
   };
@@ -124,8 +124,8 @@ export default function StoreSettingsPage() {
       setNewPassword("");
       setConfirmPassword("");
       setUpdating(false);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
       setUpdating(false);
     }
   };

@@ -182,7 +182,7 @@ export default function AddProductsPage() {
           body: JSON.stringify({
             masterProductId: product.id,
             prices: Array.from(product.prices.entries())
-              .filter(([_, price]) => price && parseFloat(price) > 0)
+              .filter(([price]) => price && parseFloat(price) > 0)
               .map(([measurementUnitId, price]) => ({
                 measurementUnitId,
                 price: parseFloat(price),

@@ -54,7 +54,7 @@ export default function EditProductPage() {
 
   useEffect(() => {
     fetchProduct();
-  }, []);
+  });
 
   const fetchProduct = async () => {
     try {
@@ -89,7 +89,7 @@ export default function EditProductPage() {
 
   const handleSave = async () => {
     // Validar precios
-    for (const [key, value] of Object.entries(prices)) {
+    for (const [value] of Object.entries(prices)) {
       if (value) {
         const price = parseFloat(value);
         if (isNaN(price) || price <= 0) {

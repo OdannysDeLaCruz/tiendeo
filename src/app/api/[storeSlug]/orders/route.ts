@@ -71,7 +71,7 @@ export async function POST(
 
     // Calcular el total
     const total = items.reduce(
-      (sum: number, item: any) => sum + Number(item.price) * item.quantity,
+      (sum: number, item: { price: string; quantity: number }) => sum + Number(item.price) * item.quantity,
       0
     );
 
@@ -86,7 +86,7 @@ export async function POST(
         notes,
         total,
         items: {
-          create: items.map((item: any) => ({
+          create: items.map((item: { storeProductId: string; measurementUnitId: string; quantity: number; price: string }) => ({
             storeProductId: item.storeProductId,
             measurementUnitId: item.measurementUnitId,
             quantity: item.quantity,

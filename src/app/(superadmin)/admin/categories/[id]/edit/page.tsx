@@ -20,7 +20,7 @@ export default function EditCategoryPage() {
 
   useEffect(() => {
     fetchCategory();
-  }, [categoryId]);
+  });
 
   const fetchCategory = async () => {
     try {
@@ -33,8 +33,8 @@ export default function EditCategoryPage() {
       setImageUrl(data.imageUrl || "");
       setDisplayOrder(data.displayOrder.toString());
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };
@@ -63,8 +63,8 @@ export default function EditCategoryPage() {
 
       router.push("/admin/categories");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setSaving(false);
     }
   };

@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     const storeId = searchParams.get("storeId");
 
     // Construir filtros dinámicos
-    const where: any = {};
+    const where: { [key: string]: string | number | boolean | null | undefined } = {};
 
     if (storeId) {
       where.storeId = storeId;

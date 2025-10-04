@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 
 interface MeasurementUnit {
   id: string;
@@ -112,8 +111,8 @@ export default function MeasurementUnitsPage() {
 
       await fetchUnits();
       handleCloseModal();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
     } finally {
       setSaving(false);
     }
@@ -132,8 +131,8 @@ export default function MeasurementUnitsPage() {
       }
 
       await fetchUnits();
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
     }
   };
 
@@ -151,8 +150,8 @@ export default function MeasurementUnitsPage() {
       }
 
       await fetchUnits();
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
     }
   };
 

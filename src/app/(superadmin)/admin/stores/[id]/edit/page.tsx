@@ -20,7 +20,7 @@ export default function EditStorePage() {
 
   useEffect(() => {
     fetchStore();
-  }, [storeId]);
+  });
 
   const fetchStore = async () => {
     try {
@@ -32,8 +32,8 @@ export default function EditStorePage() {
       setSlug(data.slug);
       setCurrentEmail(data.ownerEmail || "");
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };
@@ -44,7 +44,7 @@ export default function EditStorePage() {
     setSaving(true);
 
     try {
-      const payload: any = { name, slug };
+      const payload: { name: string; slug: string; email?: string; password?: string } = { name, slug };
 
       // Solo incluir credenciales si se proporcionan
       if (newEmail) {
@@ -70,8 +70,8 @@ export default function EditStorePage() {
 
       router.push("/admin/stores");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setSaving(false);
     }
   };

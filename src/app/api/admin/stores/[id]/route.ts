@@ -120,7 +120,7 @@ export async function PATCH(
         });
 
         if (owner) {
-          const updateData: any = {};
+          const updateData: { [key: string]: string | number | boolean | null | undefined } = {};
           if (email) {
             updateData.email = email;
           }

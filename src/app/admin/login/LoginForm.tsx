@@ -32,7 +32,7 @@ export default function LoginForm() {
       // Redirigir al dashboard de superadmin
       router.push("/admin/dashboard");
       router.refresh();
-    } catch (err) {
+    } catch {
       setError("Error al iniciar sesión");
       setLoading(false);
     }

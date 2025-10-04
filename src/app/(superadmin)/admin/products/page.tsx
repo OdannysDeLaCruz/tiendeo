@@ -38,11 +38,11 @@ export default function ProductsPage() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  });
 
   useEffect(() => {
     fetchProducts();
-  }, [selectedCategory, statusFilter]);
+  });
 
   const fetchCategories = async () => {
     try {

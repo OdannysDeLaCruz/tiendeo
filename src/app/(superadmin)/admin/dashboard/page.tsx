@@ -49,7 +49,7 @@ export default async function DashboardPage() {
   });
 
   // Agrupar pedidos por día
-  const ordersByDay = ordersLast30Days.reduce((acc: any, order) => {
+  const ordersByDay = ordersLast30Days.reduce((acc: { [key: string]: number }, order) => {
     const date = new Date(order.createdAt).toISOString().split("T")[0];
     if (!acc[date]) {
       acc[date] = 0;

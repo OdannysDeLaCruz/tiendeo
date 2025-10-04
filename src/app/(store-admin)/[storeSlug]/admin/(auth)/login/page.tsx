@@ -36,7 +36,7 @@ export default function StoreLoginPage() {
       // Redirigir al dashboard de la tienda
       router.push(`/${storeSlug}/admin/dashboard`);
       router.refresh();
-    } catch (err) {
+    } catch {
       setError("Error al iniciar sesión");
       setLoading(false);
     }

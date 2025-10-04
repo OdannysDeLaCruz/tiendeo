@@ -44,8 +44,8 @@ export default function NewProductPage() {
       const data = await response.json();
       setCategories(data);
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };
@@ -108,8 +108,8 @@ export default function NewProductPage() {
 
       router.push("/admin/products");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setSaving(false);
     }
   };

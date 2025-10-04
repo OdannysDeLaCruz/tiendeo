@@ -38,7 +38,7 @@ export default function EditProductPage() {
 
   useEffect(() => {
     fetchData();
-  }, [productId]);
+  });
 
   const fetchData = async () => {
     try {
@@ -62,8 +62,8 @@ export default function EditProductPage() {
       setCategoryId(productData.categoryId);
       setCurrentImageUrl(productData.imageUrl || "");
       setLoading(false);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };
@@ -74,7 +74,7 @@ export default function EditProductPage() {
     setSaving(true);
 
     try {
-      const payload: any = {
+      const payload: { [key: string]: string | number | boolean | null | undefined } = {
         name,
         slug,
         description,
@@ -99,8 +99,8 @@ export default function EditProductPage() {
 
       router.push("/admin/products");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setSaving(false);
     }
   };

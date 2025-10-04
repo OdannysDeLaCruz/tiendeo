@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 async function main() {
   const orders = await prisma.order.findMany({
     where: {
-      accessToken: null,
+      accessToken: "",
     },
   });
 

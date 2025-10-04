@@ -50,12 +50,12 @@ export default function OrdersPage() {
 
   useEffect(() => {
     fetchStores();
-  }, []);
+  });
 
   useEffect(() => {
     fetchOrders();
     fetchStats();
-  }, [selectedStore, statusFilter]);
+  });
 
   const fetchStores = async () => {
     try {

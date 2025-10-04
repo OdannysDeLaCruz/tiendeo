@@ -45,8 +45,8 @@ export default function NewStorePage() {
 
       router.push("/admin/stores");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };

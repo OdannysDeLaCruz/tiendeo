@@ -50,8 +50,8 @@ export default function NewCategoryPage() {
 
       router.push("/admin/categories");
       router.refresh();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err as Error).message);
       setLoading(false);
     }
   };

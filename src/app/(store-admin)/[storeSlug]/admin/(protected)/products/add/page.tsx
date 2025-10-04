@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
+import Image from "next/image";
 import ProductImage from "@/components/ProductImage";
 
 interface Category {
@@ -34,11 +35,6 @@ interface MasterProduct {
   productMeasurements?: ProductMeasurement[];
 }
 
-interface ProductPrice {
-  measurementUnitId: string;
-  price: string;
-}
-
 interface SelectedProduct {
   id: string;
   name: string;
@@ -69,13 +65,13 @@ export default function AddProductsPage() {
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  });
 
   useEffect(() => {
     if (selectedCategory) {
       fetchProducts(selectedCategory);
     }
-  }, [selectedCategory]);
+  });
 
   const fetchCategories = async () => {
     try {
@@ -202,8 +198,8 @@ export default function AddProductsPage() {
 
       alert(`${productsToAdd.length} productos agregados exitosamente`);
       router.push(`/${storeSlug}/admin/products`);
-    } catch (error: any) {
-      alert(error.message);
+    } catch (error) {
+      alert((error as Error).message);
       setAdding(false);
     }
   };
@@ -298,10 +294,11 @@ export default function AddProductsPage() {
                   className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow overflow-hidden group"
                 >
                   <div className="aspect-video relative overflow-hidden bg-gray-100">
-                    <img
+                    <Image
                       src={getCategoryImage(category)}
                       alt={category.name}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   </div>
                   <div className="p-4">

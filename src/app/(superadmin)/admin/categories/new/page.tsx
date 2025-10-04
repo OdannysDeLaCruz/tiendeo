@@ -9,7 +9,7 @@ export default function NewCategoryPage() {
   const router = useRouter();
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState<string | null>("");
   const [displayOrder, setDisplayOrder] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -120,7 +120,7 @@ export default function NewCategoryPage() {
                 Imagen de la Categoría
               </label>
               <ImageUpload
-                currentImage={imageUrl}
+                currentImage={imageUrl || undefined}
                 onImageChange={setImageUrl}
               />
               <p className="mt-1 text-sm text-gray-500">

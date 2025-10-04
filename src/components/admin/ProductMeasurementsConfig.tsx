@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 interface MeasurementUnit {
   id: string;
@@ -40,12 +40,6 @@ export default function ProductMeasurementsConfig({
     stepQuantity: "",
   });
 
-  useEffect(() => {
-    fetchAvailableUnits();
-    if (productId) {
-      fetchProductMeasurements();
-    }
-  }, [productId]);
 
   useEffect(() => {
     if (onMeasurementsChange) {
@@ -53,7 +47,7 @@ export default function ProductMeasurementsConfig({
     }
   }, [selectedMeasurements]);
 
-  const fetchAvailableUnits = async () => {
+  const fetchAvailableUnits = useCallback(async () => {
     try {
       const response = await fetch("/api/admin/measurement-units");
       if (response.ok) {
@@ -63,9 +57,9 @@ export default function ProductMeasurementsConfig({
     } catch (error) {
       console.error("Error fetching units:", error);
     }
-  };
+  }, []);
 
-  const fetchProductMeasurements = async () => {
+  const fetchProductMeasurements = useCallback(async () => {
     if (!productId) return;
 
     try {
@@ -88,7 +82,14 @@ export default function ProductMeasurementsConfig({
     } catch (error) {
       console.error("Error fetching measurements:", error);
     }
-  };
+  }, [productId]);
+
+  useEffect(() => {
+    fetchAvailableUnits();
+    if (productId) {
+      fetchProductMeasurements();
+    }
+  }, [productId, fetchAvailableUnits, fetchProductMeasurements]);
 
   const handleAddMeasurement = async () => {
     if (!newMeasurement.measurementUnitId) {

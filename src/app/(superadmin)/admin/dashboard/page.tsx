@@ -62,7 +62,7 @@ export default async function DashboardPage() {
   const ordersData = Object.entries(ordersByDay)
     .map(([date, count]) => ({
       date,
-      count,
+      count: count as number,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 

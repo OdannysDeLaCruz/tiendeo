@@ -75,7 +75,7 @@ export default function ProductMeasurementsConfig({
       if (response.ok) {
         const data = await response.json();
         setSelectedMeasurements(
-          data.map((m: any) => ({
+          data.map((m: ProductMeasurement) => ({
             id: m.id,
             measurementUnitId: m.measurementUnitId,
             measurementUnit: m.measurementUnit,
@@ -119,8 +119,8 @@ export default function ProductMeasurementsConfig({
         }
 
         await fetchProductMeasurements();
-      } catch (error: any) {
-        alert(error.message);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "Error desconocido");
         return;
       }
     } else {
@@ -171,8 +171,8 @@ export default function ProductMeasurementsConfig({
         }
 
         await fetchProductMeasurements();
-      } catch (error: any) {
-        alert(error.message);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "Error desconocido");
       }
     } else {
       // Producto nuevo, solo quitar de la lista
@@ -200,8 +200,8 @@ export default function ProductMeasurementsConfig({
         if (!response.ok) throw new Error("Error al actualizar");
 
         await fetchProductMeasurements();
-      } catch (error: any) {
-        alert(error.message);
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "Error desconocido");
       }
     } else {
       // Producto nuevo, actualizar lista local

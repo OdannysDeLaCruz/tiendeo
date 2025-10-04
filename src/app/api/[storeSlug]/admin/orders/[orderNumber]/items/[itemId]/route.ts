@@ -31,6 +31,10 @@ export async function PATCH(
     }
 
     // Verificar que el item pertenece a un pedido de esta tienda
+    if (!session.user.storeId) {
+      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    }
+
     const item = await prisma.orderItem.findFirst({
       where: {
         id: itemId,
